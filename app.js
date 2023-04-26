@@ -84,90 +84,34 @@ function spawningNumbers() {
 
 function movingNumbers(axis1,axis2,direction) {
     let moveCounter = 0;
-    if(direction == 'forward') {
-        for(let i = 2; i>=0; i--) {
-            for(let j=0; j<=3; j++) {
-                let cell = cellCoordinates.find(cell => (cell[axis1] == i && cell[axis2] == j))
-                let nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] > i && nextCell[axis2] == j && nextCell.value.length != 0))
-                if(typeof(nextCell) == 'undefined') {
-                    nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == 3 && nextCell[axis2] ==j))
-                }
-                let nextCellPos = nextCell[axis1]
-                if(!(cell.value.length == 0)) { 
-                    if(nextCell.value == '') {
-                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                        nextCell.value = cell.value;
-                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                        cell.value = '';
-                        moveCounter++;
-                    }
-                    else if(cell.value == nextCell.value) {
-                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                        nextCell.value = String(Number(nextCell.value) *2)
-                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                        cell.value = '';
-                        moveCounter++;
-                    }
-                    else {
-                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == (nextCellPos-1) && nextCell[axis2] ==j))
-                        if(nextCell.value != cell.value) {
-                            cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                            nextCell.value = cell.value;
-                            cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                            cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                            cell.value = '';
-                            moveCounter++;
-                        }
-                    }
-                    
-                }
+    const increment = direction == 'forward' ? -1 : 1;
+    const lastCell = direction == 'forward' ? 3 : 0;
+    const startColumn = direction == 'forward' ? 2 : 1;
+    const stopColumn = direction == 'forward' ? 0 : 3;
+    for(let i = startColumn; i * increment <= stopColumn; i += increment) {
+        for(let j=0; j<=3; j++) {
+            let cell = cellCoordinates.find(cell => (cell[axis1] == i && cell[axis2] == j))
+            let currentRow = cellCoordinates.filter((entry) => entry[axis2] == j)
+            if (direction == 'backwards')
+                currentRow.sort((a, b) => b[axis1] - a[axis1])
+            let nextCell = currentRow.find(nextCell => (nextCell[axis1] * increment < i * increment && (nextCell.value || nextCell[axis1] == lastCell)))
+            let nextCellPos = nextCell[axis1]
+            if(!cell.value)
+                continue
+            if (nextCell.value && cell.value != nextCell.value) {
+                nextCell = currentRow.find(nextCell => (nextCell[axis1] == (nextCellPos + increment)));
             }
-    
-        }
-    }
-    if(direction == 'backwards') {
-        for(let i = 1; i<=3; i++) {
-            for(let j=0; j<=3; j++) {
-                let cell = cellCoordinates.find(cell => (cell[axis1] == i && cell[axis2] == j))
-                let nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] < i && nextCell[axis2] == j && nextCell.value.length != 0))
-                if(typeof(nextCell) == 'undefined') {
-                    nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == 0 && nextCell[axis2] == j))
-                }
-                let nextCellPos = nextCell[axis1]
-                if(!(cell.value.length == 0)) { 
-                    if(nextCell.value == '') {
-                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                        nextCell.value = cell.value;
-                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                        cell.value = '';
-                        moveCounter++;
-                    }
-                    else if(cell.value == nextCell.value) {
-                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                        nextCell.value = String(Number(nextCell.value) *2)
-                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                        cell.value = '';
-                        moveCounter++;
-                    }
-                    else {
-                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == (nextCellPos+1) && nextCell[axis2] ==j))
-                        if(nextCell.value != cell.value) {
-                            cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
-                            nextCell.value = cell.value;
-                            cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
-                            cellElements[cell.html_number].classList.remove('n'+String(cell.value));
-                            cell.value = '';
-                            moveCounter++;
-                        }
-                    }
-                    
-                }
+            if (nextCell == cell) continue
+            let newValue = cell.value;
+            if (cell.value == nextCell.value) {
+                newValue = String(Number(nextCell.value) * 2);
             }
-    
+            cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
+            nextCell.value = newValue;
+            cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+            cellElements[cell.html_number].classList.remove('n'+String(cell.value));
+            cell.value = '';
+            moveCounter++;
         }
     }
 
