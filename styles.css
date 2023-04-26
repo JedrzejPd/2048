@@ -18,6 +18,10 @@ body {
     grid-template-columns: repeat(4, auto);
 }
 
+.cell.spawned {
+    background-color: blue;
+}
+
 .cell {
     width: var(--cell-size);
     height: var(--cell-size);
@@ -29,3 +33,25 @@ body {
     position: relative;
     font-size: 5rem;
 }
+
+.cell.n2 {background-color: #eee4da;}
+
+.cell.n4 { background-color:#ede0c8;}
+
+.cell.n8 {background-color: #f2b179;}
+
+.cell.n16 {background-color:#f59563;}
+
+.cell.n32 {background-color:#f67c5f;}
+
+.cell.n64 {background-color:#f65e3b;}
+
+.cell.n128 {background-color: #edcf72;}
+
+.cell.n256 {background-color: #edcc61;}
+
+.cell.n512 {background-color: #edc850;}
+
+.cell.n1024 {background-color: #edc53f;}
+
+.cell.n2048 {background-color: #edc22e;}

@@ -17,19 +17,14 @@ for(let i = 0; i<=3; i++) {
     }
 }
 
-console.log(cellCoordinates)
-
-
 startGame()
-
 
 function startGame() {
     spawningNumbers()
     handleArrowKeys()
-    //checking for win
+    checkingIfWin()
     //checking for lose
 }
-
 
 function handleArrowKeys() {
     document.addEventListener("keydown", function(event) {
@@ -37,20 +32,16 @@ function handleArrowKeys() {
         const key = event.key; 
         switch (key) { 
           case "ArrowLeft":
-            movingRowColumn('x','y','backwards')
-            spawningNumbers()
+            movingNumbers('x','y','backwards')
             break;
           case "ArrowRight":
-            movingRowColumn('x','y','forward')
-            spawningNumbers()
+            movingNumbers('x','y','forward')
             break;
           case "ArrowUp":
-            movingRowColumn('y','x','backwards')
-            spawningNumbers()
+            movingNumbers('y','x','backwards')
             break;
           case "ArrowDown":
-            movingRowColumn('y','x','forward')
-            spawningNumbers()
+            movingNumbers('y','x','forward')
             break;
         }
       });
@@ -80,20 +71,20 @@ function spawningNumbers() {
 
     if(randomNumber == 1) {
         cellCoordinates[freeCells[randomCell]].value = '4';
-        console.log(randomCell)
+        cellElements[cellCoordinates[freeCells[randomCell]].html_number].classList.add('n4')
     } 
     else {
-        cellCoordinates[freeCells[randomCell]].value = '2'; 
+        cellCoordinates[freeCells[randomCell]].value = '2';
+        cellElements[cellCoordinates[freeCells[randomCell]].html_number].classList.add('n2') 
         }
     freeCells =[]
     parsingValues()
 }
 
 
-function movingRowColumn(axis1,axis2,direction) {
-    console.log('function passed')
+function movingNumbers(axis1,axis2,direction) {
+    let moveCounter = 0;
     if(direction == 'forward') {
-        console.log('if forward passed')
         for(let i = 2; i>=0; i--) {
             for(let j=0; j<=3; j++) {
                 let cell = cellCoordinates.find(cell => (cell[axis1] == i && cell[axis2] == j))
@@ -102,22 +93,32 @@ function movingRowColumn(axis1,axis2,direction) {
                     nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == 3 && nextCell[axis2] ==j))
                 }
                 let nextCellPos = nextCell[axis1]
-                console.log(cell)
-                console.log(nextCell)
                 if(!(cell.value.length == 0)) { 
                     if(nextCell.value == '') {
+                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                         nextCell.value = cell.value;
+                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                         cell.value = '';
+                        moveCounter++;
                     }
                     else if(cell.value == nextCell.value) {
+                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                         nextCell.value = String(Number(nextCell.value) *2)
+                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                         cell.value = '';
+                        moveCounter++;
                     }
                     else {
-                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == nextCellPos -1 && nextCell[axis2] ==j))
+                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == (nextCellPos-1) && nextCell[axis2] ==j))
                         if(nextCell.value != cell.value) {
+                            cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                             nextCell.value = cell.value;
+                            cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                            cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                             cell.value = '';
+                            moveCounter++;
                         }
                     }
                     
@@ -127,31 +128,40 @@ function movingRowColumn(axis1,axis2,direction) {
         }
     }
     if(direction == 'backwards') {
-        console.log('if backwards passed')
         for(let i = 1; i<=3; i++) {
             for(let j=0; j<=3; j++) {
                 let cell = cellCoordinates.find(cell => (cell[axis1] == i && cell[axis2] == j))
                 let nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] < i && nextCell[axis2] == j && nextCell.value.length != 0))
                 if(typeof(nextCell) == 'undefined') {
-                    nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == 0 && nextCell[axis2] ==j))
+                    nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == 0 && nextCell[axis2] == j))
                 }
                 let nextCellPos = nextCell[axis1]
-                console.log(cell)
-                console.log(nextCell)
                 if(!(cell.value.length == 0)) { 
                     if(nextCell.value == '') {
+                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                         nextCell.value = cell.value;
+                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                         cell.value = '';
+                        moveCounter++;
                     }
                     else if(cell.value == nextCell.value) {
+                        cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                         nextCell.value = String(Number(nextCell.value) *2)
+                        cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                        cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                         cell.value = '';
+                        moveCounter++;
                     }
                     else {
-                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == nextCellPos +1 && nextCell[axis2] ==j))
+                        nextCell = cellCoordinates.find(nextCell => (nextCell[axis1] == (nextCellPos+1) && nextCell[axis2] ==j))
                         if(nextCell.value != cell.value) {
+                            cellElements[nextCell.html_number].classList.remove('n'+String(nextCell.value));
                             nextCell.value = cell.value;
+                            cellElements[nextCell.html_number].classList.add('n'+String(nextCell.value));
+                            cellElements[cell.html_number].classList.remove('n'+String(cell.value));
                             cell.value = '';
+                            moveCounter++;
                         }
                     }
                     
@@ -160,7 +170,16 @@ function movingRowColumn(axis1,axis2,direction) {
     
         }
     }
+
     parsingValues()
+    if(moveCounter !=0) {spawningNumbers()}
+} 
+
+function checkingIfWin() {
+    if(cellCoordinates.value = '2048') {
+
+    }
+
 }
 
 
